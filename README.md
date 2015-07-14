@@ -6,21 +6,25 @@ The library can either return dummy values, or values defined by you in a CSV fi
 
 For more details please see the [Wiki](https://github.com/kaiwinter/dummyjdbc/wiki)
 
-## dummyjdbc at Maven Central
-```xml
-<dependency>
-   <groupId>com.googlecode.dummyjdbc</groupId>
-   <artifactId>dummyjdbc</artifactId>
-   <version>1.2</version>
-</dependency>
+The original dummyjdbc was extended so that it accepts the filename of the results CSV file as a comment in the statement SQL. The benefit beeing that also arbitrary complex querys can be used.
+
+To use the "keyed" driver, instantiate the driver with property "mode" set to "keyed" (the default is the table-based driver):
+```
+Properties props = new Properties();
+props.setProperty("mode", "keyed");
+Connection connection = DriverManager.getConnection("any", props);
+```
+		
+
+Then, in the SQL sent to the connection, place a comment as follows:
+
 ```
 
+-- SQL_SAMPLE_RESULT_DATA_FILE=test_table.csv
+   
+```
 
+The  ```test_table.csv``` must be placed into a directory ```result_data``` in the classpath (into ```src/test/resources/result_data/``` for a Maven project so that it is placed in ```target/test-classes/result_data``` when the tests are run.
 
-## Binary Downloads
-| *Filename* | *Description* | *Release Date* |
-|------------|---------------|----------------|
-| [dummyjdbc-1.2-all.jar](https://drive.google.com/file/d/0B0qVR-zttDRCeUVYcXJmV1RRcGs/view?usp=sharing) | Most current version with dependencies (slf4j, logback, aspectj) | March 2015 |
-| [dummyjdbc-1.2.jar](https://drive.google.com/file/d/0B0qVR-zttDRCelpKOUJ2REctNEk/view?usp=sharing) | Most current version | March 2015 |
-| [dummyjdbc-1.1.3-all.jar](https://drive.google.com/file/d/0B0qVR-zttDRCTy10U0R0dlpBWTA/view?usp=sharing)| Previous version without logging | July 2013 |
-| [dummyjdbc-design.png](https://code.google.com/p/dummyjdbc/downloads/detail?name=dummyjdbc-design.png&can=2&q=) | dummyjdbc in one picture | July 2013 |
+   
+   
