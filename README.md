@@ -24,7 +24,7 @@ Then, in the SQL sent to the connection, place a comment as follows:
    
 ```
 
-The  ```test_table.csv``` must be placed into a directory ```result_data``` in the classpath (into ```src/test/resources/result_data/``` for a Maven project so that it is placed in ```target/test-classes/result_data``` when the tests are run.
+The  ```test_table.csv``` must be placed into a directory ```result_data``` in the classpath (into ```src/test/resources/result_data/``` for a Maven project so that it is placed in ```target/test-classes/result_data``` when the tests are run).
 
    
    
