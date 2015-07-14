@@ -29,7 +29,7 @@ public class DummyConnection extends ConnectionAdapter {
 	public DummyConnection(Map<String, File> tableResources) {
 		this.tableResources = tableResources;
 	}
-
+	
 	@Override
 	public Statement createStatement() throws SQLException {
 		return new CsvStatement(tableResources);

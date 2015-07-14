@@ -14,6 +14,7 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 import com.googlecode.dummyjdbc.connection.impl.DummyConnection;
+import com.googlecode.dummyjdbc.connection.impl.KeyedDummyConnection;
 
 /**
  * The {@link DummyJdbcDriver}. The {@link #connect(String, Properties)} method returns the {@link DummyConnection}.
@@ -23,7 +24,7 @@ import com.googlecode.dummyjdbc.connection.impl.DummyConnection;
 public final class DummyJdbcDriver implements Driver {
 
 	private static Map<String, File> tableResources = Collections.synchronizedMap(new HashMap<String, File>());
-
+	
 	static {
 		try {
 			// Register this with the DriverManager
@@ -68,6 +69,9 @@ public final class DummyJdbcDriver implements Driver {
 
 	@Override
 	public Connection connect(String url, Properties info) throws SQLException {
+		if (info != null && info.containsKey("mode") && ((String)info.get("mode")).equals("keyed")) {
+			return new KeyedDummyConnection(tableResources);
+		}
 		return new DummyConnection(tableResources);
 	}
 
