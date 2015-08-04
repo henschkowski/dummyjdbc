@@ -12,19 +12,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.googlecode.dummyjdbc.connection.impl.DummyConnection;
 import com.googlecode.dummyjdbc.connection.impl.KeyedDummyConnection;
 
 /**
- * The {@link DummyJdbcDriver}. The {@link #connect(String, Properties)} method returns the {@link DummyConnection}.
- *
+ * The {@link DummyJdbcDriver}. The {@link #connect(String, Properties)} method
+ * returns the {@link DummyConnection}.
+ * 
  * @author Kai Winter
  */
 public final class DummyJdbcDriver implements Driver {
 
-	private static Map<String, File> tableResources = Collections.synchronizedMap(new HashMap<String, File>());
-	
+	private static Map<String, File> tableResources = Collections
+			.synchronizedMap(new HashMap<String, File>());
+
 	static {
 		try {
 			// Register this with the DriverManager
@@ -35,13 +39,16 @@ public final class DummyJdbcDriver implements Driver {
 	}
 
 	/**
-	 * Registers a CSV file for a database table. When a Query is executed like <code>SELECT * FROM ADDRESSES</code> the
-	 * given <code>csvFile</code> for the given <code>tablename</code> <code>addresses</code> will be used.
-	 *
+	 * Registers a CSV file for a database table. When a Query is executed like
+	 * <code>SELECT * FROM ADDRESSES</code> the given <code>csvFile</code> for
+	 * the given <code>tablename</code> <code>addresses</code> will be used.
+	 * 
 	 * @param tablename
-	 *            The name of the database table like in the SQL statement (e.g. addresses).
+	 *            The name of the database table like in the SQL statement (e.g.
+	 *            addresses).
 	 * @param csvFile
-	 *            A {@link File} object of a CSV file which should be parsed in order to return table data.
+	 *            A {@link File} object of a CSV file which should be parsed in
+	 *            order to return table data.
 	 */
 	public static void addTableResource(String tablename, File csvFile) {
 		tableResources.put(tablename, csvFile);
@@ -69,14 +76,21 @@ public final class DummyJdbcDriver implements Driver {
 
 	@Override
 	public Connection connect(String url, Properties info) throws SQLException {
-		if (info != null && info.containsKey("mode") && ((String)info.get("mode")).equals("keyed")) {
-			return new KeyedDummyConnection(tableResources);
+		String path = null;
+		if (url != null && url.matches(".*:keyed.*")) {
+			Pattern pattern = Pattern.compile(":path=(.*)$");
+			Matcher matcher = pattern.matcher(url);
+			if (matcher != null && matcher.find() && matcher.groupCount() > 0) {
+				path = matcher.group(1);
+			}
+			return new KeyedDummyConnection(tableResources, path);
 		}
 		return new DummyConnection(tableResources);
 	}
 
 	@Override
-	public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties props) throws SQLException {
+	public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties props)
+			throws SQLException {
 		return new DriverPropertyInfo[0];
 	}
 

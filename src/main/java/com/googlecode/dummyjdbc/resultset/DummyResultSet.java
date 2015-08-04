@@ -22,9 +22,12 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+import javax.sql.RowSetMetaData;
+import javax.sql.rowset.RowSetMetaDataImpl;
+
 /**
  * Implementation of {@link ResultSet} which returns default values.
- *
+ * 
  * @author Kai Winter
  */
 public class DummyResultSet implements ResultSet {
@@ -229,7 +232,9 @@ public class DummyResultSet implements ResultSet {
 
 	@Override
 	public ResultSetMetaData getMetaData() throws SQLException {
-		return null;
+		RowSetMetaData rsmd = new RowSetMetaDataImpl();
+
+		return (ResultSetMetaData) rsmd;
 	}
 
 	@Override
@@ -502,15 +507,18 @@ public class DummyResultSet implements ResultSet {
 	}
 
 	@Override
-	public void updateAsciiStream(String columnLabel, InputStream x, int length) throws SQLException {
+	public void updateAsciiStream(String columnLabel, InputStream x, int length)
+			throws SQLException {
 	}
 
 	@Override
-	public void updateBinaryStream(String columnLabel, InputStream x, int length) throws SQLException {
+	public void updateBinaryStream(String columnLabel, InputStream x, int length)
+			throws SQLException {
 	}
 
 	@Override
-	public void updateCharacterStream(String columnLabel, Reader reader, int length) throws SQLException {
+	public void updateCharacterStream(String columnLabel, Reader reader, int length)
+			throws SQLException {
 	}
 
 	@Override
@@ -773,7 +781,8 @@ public class DummyResultSet implements ResultSet {
 	}
 
 	@Override
-	public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException {
+	public void updateNCharacterStream(String columnLabel, Reader reader, long length)
+			throws SQLException {
 	}
 
 	@Override
@@ -789,23 +798,28 @@ public class DummyResultSet implements ResultSet {
 	}
 
 	@Override
-	public void updateAsciiStream(String columnLabel, InputStream x, long length) throws SQLException {
+	public void updateAsciiStream(String columnLabel, InputStream x, long length)
+			throws SQLException {
 	}
 
 	@Override
-	public void updateBinaryStream(String columnLabel, InputStream x, long length) throws SQLException {
+	public void updateBinaryStream(String columnLabel, InputStream x, long length)
+			throws SQLException {
 	}
 
 	@Override
-	public void updateCharacterStream(String columnLabel, Reader reader, long length) throws SQLException {
+	public void updateCharacterStream(String columnLabel, Reader reader, long length)
+			throws SQLException {
 	}
 
 	@Override
-	public void updateBlob(int columnIndex, InputStream inputStream, long length) throws SQLException {
+	public void updateBlob(int columnIndex, InputStream inputStream, long length)
+			throws SQLException {
 	}
 
 	@Override
-	public void updateBlob(String columnLabel, InputStream inputStream, long length) throws SQLException {
+	public void updateBlob(String columnLabel, InputStream inputStream, long length)
+			throws SQLException {
 	}
 
 	@Override

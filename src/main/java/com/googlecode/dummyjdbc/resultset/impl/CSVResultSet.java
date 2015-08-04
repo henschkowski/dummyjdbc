@@ -15,7 +15,7 @@ import com.googlecode.dummyjdbc.resultset.DummyResultSet;
 
 /**
  * The {@link CSVResultSet} which iterates over the CSV file data.
- *
+ * 
  * @author Kai Winter
  */
 public class CSVResultSet extends DummyResultSet {
@@ -50,7 +50,8 @@ public class CSVResultSet extends DummyResultSet {
 	 *            the name of the table this {@link CSVResultSet} stands for.
 	 * 
 	 * @param entries
-	 *            Collection of entries from the CSV file. Each {@link LinkedHashMap} maps column name to column value.
+	 *            Collection of entries from the CSV file. Each
+	 *            {@link LinkedHashMap} maps column name to column value.
 	 */
 	public CSVResultSet(String tableName, Collection<LinkedHashMap<String, String>> entries) {
 		this.tableName = tableName;
@@ -151,8 +152,8 @@ public class CSVResultSet extends DummyResultSet {
 			date = new Date(utilDate.getTime());
 
 		} catch (ParseException e) {
-			String message = MessageFormat.format("Could not parse date: ''{0}'' using format ''{1}''", string,
-					DATE_FORMAT);
+			String message = MessageFormat.format(
+					"Could not parse date: ''{0}'' using format ''{1}''", string, DATE_FORMAT);
 			throw new SQLException(message, e);
 		}
 		return date;
@@ -163,8 +164,8 @@ public class CSVResultSet extends DummyResultSet {
 
 		if (columnIndex > columns.length) {
 			String message = MessageFormat.format(
-					"Column index {0} does not exist in table file ''{1}'' (type ''{2}'')", columnIndex, tableName,
-					clazz);
+					"Column index {0} does not exist in table file ''{1}'' (type ''{2}'')",
+					columnIndex, tableName, clazz);
 			throw new SQLException(message);
 		}
 
@@ -175,7 +176,8 @@ public class CSVResultSet extends DummyResultSet {
 
 	private String getValueForColumnLabel(String columnLabel, Class<?> clazz) throws SQLException {
 		if (!currentEntry.containsKey(columnLabel.toUpperCase())) {
-			String message = MessageFormat.format("Column ''{0}'' does not exist in table file ''{1}'' (type ''{2}'')",
+			String message = MessageFormat.format(
+					"Column ''{0}'' does not exist in table file ''{1}'' (type ''{2}'')",
 					columnLabel, tableName, clazz);
 			throw new SQLException(message);
 		}

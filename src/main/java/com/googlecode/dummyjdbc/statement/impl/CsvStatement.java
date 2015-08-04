@@ -29,21 +29,22 @@ import com.googlecode.dummyjdbc.resultset.impl.CSVResultSet;
 import com.googlecode.dummyjdbc.statement.StatementAdapter;
 
 /**
- * This class does the actual work of the Generic... classes. It tries to open a CSV file for the table name in the
- * query and parses the contained data.
+ * This class does the actual work of the Generic... classes. It tries to open a
+ * CSV file for the table name in the query and parses the contained data.
  * 
  * @author Kai Winter
  */
 public final class CsvStatement extends StatementAdapter {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CsvStatement.class);
 
 	/** Pattern to get table name from an SQL statement. */
-	private static final Pattern TABLENAME_PATTERN = Pattern.compile(".*from (\\S*)\\s?.*", Pattern.CASE_INSENSITIVE);
+	private static final Pattern TABLENAME_PATTERN = Pattern.compile(".*from (\\S*)\\s?.*",
+			Pattern.CASE_INSENSITIVE);
 
 	/** Pattern to get the name of a stored procedure from an SQL statement. */
-	private static final Pattern STORED_PROCEDURE_PATTERN = Pattern.compile(".*(EXEC|EXECUTE) (\\S*)\\s?.*",
-			Pattern.CASE_INSENSITIVE);
+	private static final Pattern STORED_PROCEDURE_PATTERN = Pattern.compile(
+			".*(EXEC|EXECUTE) (\\S*)\\s?.*", Pattern.CASE_INSENSITIVE);
 
 	private final Map<String, File> tableResources;
 
@@ -87,9 +88,11 @@ public final class CsvStatement extends StatementAdapter {
 			String path = src.getLocation().getPath();
 			path = path.substring(0, path.lastIndexOf("/"));
 			try {
-				URL url = CsvStatement.class.getResource("/tables/" + tableName.toLowerCase() + ".csv");
+				URL url = CsvStatement.class.getResource("/tables/" + tableName.toLowerCase()
+						+ ".csv");
 				if (url == null) {
-					LOGGER.info("No table definition found for '{}', using DummyResultSet.", tableName);
+					LOGGER.info("No table definition found for '{}', using DummyResultSet.",
+							tableName);
 					return new DummyResultSet();
 				} else {
 					resource = new File(url.toURI());
@@ -139,8 +142,9 @@ public final class CsvStatement extends StatementAdapter {
 						LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 						for (int i = 0; i < header.length; i++) {
 							if (map.containsKey(header[i].trim().toUpperCase())) {
-								String message = MessageFormat.format("Duplicate column in file ''{0}.txt: {1}",
-										tableName, header[i]);
+								String message = MessageFormat.format(
+										"Duplicate column in file ''{0}.txt: {1}", tableName,
+										header[i]);
 								throw new IllegalArgumentException(message);
 							}
 							map.put(header[i].trim().toUpperCase(), data[i].trim());
@@ -148,7 +152,8 @@ public final class CsvStatement extends StatementAdapter {
 						}
 						entries.add(map);
 					} else {
-						throw new IllegalArgumentException("Length of data does not fit header length.");
+						throw new IllegalArgumentException(
+								"Length of data does not fit header length.");
 					}
 
 				}

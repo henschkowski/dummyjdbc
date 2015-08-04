@@ -24,12 +24,14 @@ public final class KeyedCsvStatementTest {
 		Class.forName(DummyJdbcDriver.class.getCanonicalName());
 
 		Properties props = new Properties();
-		props.setProperty("mode", "keyed");
-		Connection connection = DriverManager.getConnection("any", props);
+		Connection connection = DriverManager.getConnection("jdbc:any:keyed", props);
 		Statement statement = connection.createStatement();
 
 		Assert.assertTrue(statement instanceof KeyedCsvStatement);
-		resultSet = statement.executeQuery("-- SQL_SAMPLE_RESULT_DATA_FILE=test_table.csv\nSELECT * FROM test_table");
+		resultSet = statement
+				.executeQuery("SELECT count(*) FROM test_table -- SQL_SAMPLE_RESULT_DATA_FILE=test_table.csv \nSELECT * FROM test_table");
+		resultSet = statement
+				.executeQuery("SELECT count(*) FROM test_table -- SQL_SAMPLE_RESULT_DATA_FILE=test_table.csv");
 	}
 
 	@Test

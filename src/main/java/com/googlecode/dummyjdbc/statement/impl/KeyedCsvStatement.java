@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,21 +28,26 @@ import com.googlecode.dummyjdbc.resultset.impl.CSVResultSet;
 import com.googlecode.dummyjdbc.statement.StatementAdapter;
 
 /**
- * This class does the actual work of the Generic... classes. It tries to open a CSV file for  the
- * query (query need to have a line with SQL_SAMPLE_RESULT_DATA_FILE=<filename.csv> in a comment line)
- * and parses the contained data.
+ * This class does the actual work of the Generic... classes. It tries to open a
+ * CSV file for the query (query need to have a line with
+ * SQL_SAMPLE_RESULT_DATA_FILE=<filename.csv> in a comment line) and parses the
+ * contained data.
  * 
  * @author Kai Winter
  * @author Ralf Henschkowski
  */
 public final class KeyedCsvStatement extends StatementAdapter {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(KeyedCsvStatement.class);
 
 	/** Pattern to get table name from an SQL statement. */
-	private static final Pattern STMTRESULTS_PATTERN = Pattern.compile(".*--\\s*SQL_SAMPLE_RESULT_DATA_FILE=(\\S*)\\s.*", Pattern.CASE_INSENSITIVE);
+	private static final Pattern STMTRESULTS_PATTERN = Pattern.compile(
+			".*--\\s*SQL_SAMPLE_RESULT_DATA_FILE=(\\S*).*", Pattern.CASE_INSENSITIVE
+					| Pattern.DOTALL);
 
 	private final Map<String, File> resultResources;
+
+	private String path;
 
 	/**
 	 * Constructs a new {@link KeyedCsvStatement}.
@@ -53,6 +57,11 @@ public final class KeyedCsvStatement extends StatementAdapter {
 	 */
 	public KeyedCsvStatement(Map<String, File> tableResources) {
 		this.resultResources = tableResources;
+	}
+
+	public KeyedCsvStatement(Map<String, File> tableResources, String path) {
+		this.resultResources = tableResources;
+		this.path = path;
 	}
 
 	@Override
@@ -72,20 +81,29 @@ public final class KeyedCsvStatement extends StatementAdapter {
 		File resource = resultResources.get(resultsFile.toLowerCase());
 		if (resource == null) {
 			// Try to load a file from the ./result_data/ directory
-			
+
 			try {
-				
-//				Enumeration<URL> e = getClass().getClassLoader().getResources("");
-//		        while (e.hasMoreElements())
-//		        {
-//		            System.out.println("ClassLoader Resource: " + e.nextElement());
-//		        }
-//		        System.out.println("Class Resource: " + Test.class.getResource("/"));
-//				
+
+				Enumeration<URL> e = getClass().getClassLoader().getResources("");
+				while (e.hasMoreElements()) {
+					System.out.println("ClassLoader Resource: " + e.nextElement());
+				}
+				System.out.println("Class Resource: " + getClass().getResource("/"));
+				//
+				// when called outside a JAR
 				URL url = getClass().getClassLoader().getResource("result_data/" + resultsFile);
-				
 				if (url == null) {
-					LOGGER.info("No result data definition file found for '{}', using DummyResultSet.", resultsFile);
+					// called inside a JAR?
+					url = getClass().getClassLoader().getResource("/result_data/" + resultsFile);
+				}
+				if (url == null) {
+					// try a path coded into an environment variable
+					url = new URL(path + "/result_data/" + resultsFile);
+				}
+				if (url == null) {
+					LOGGER.info(
+							"No result data definition file found for '{}', using DummyResultSet.",
+							resultsFile);
 					return new DummyResultSet();
 				} else {
 					resource = new File(url.toURI());
@@ -100,7 +118,8 @@ public final class KeyedCsvStatement extends StatementAdapter {
 			dummyDataStream = new FileInputStream(resource);
 			return createGenericResultSet(resultsFile, dummyDataStream);
 		} catch (FileNotFoundException e) {
-			LOGGER.info("No results data definition found for '{}', using DummyResultSet.", resultsFile);
+			LOGGER.info("No results data definition found for '{}', using DummyResultSet.",
+					resultsFile);
 		} finally {
 			if (dummyDataStream != null) {
 				try {
@@ -135,8 +154,9 @@ public final class KeyedCsvStatement extends StatementAdapter {
 						LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
 						for (int i = 0; i < header.length; i++) {
 							if (map.containsKey(header[i].trim().toUpperCase())) {
-								String message = MessageFormat.format("Duplicate column in file ''{0}.txt: {1}",
-										resultsName, header[i]);
+								String message = MessageFormat.format(
+										"Duplicate column in file ''{0}.txt: {1}", resultsName,
+										header[i]);
 								throw new IllegalArgumentException(message);
 							}
 							map.put(header[i].trim().toUpperCase(), data[i].trim());
@@ -144,7 +164,8 @@ public final class KeyedCsvStatement extends StatementAdapter {
 						}
 						entries.add(map);
 					} else {
-						throw new IllegalArgumentException("Length of data does not fit header length.");
+						throw new IllegalArgumentException(
+								"Length of data does not fit header length.");
 					}
 
 				}
