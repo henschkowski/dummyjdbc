@@ -23,7 +23,7 @@ public class CSVResultSet extends DummyResultSet {
 	/**
 	 * The date format for parsing a date from a CSV file.
 	 */
-	private static final String DATE_FORMAT = "dd-MMM-yy";
+	private static final String DATE_FORMAT = "dd.MM.yy";
 
 	private static final ThreadLocal<DateFormat> THREAD_LOCAL_DATEFORMAT = new ThreadLocal<DateFormat>() {
 		@Override
@@ -86,7 +86,9 @@ public class CSVResultSet extends DummyResultSet {
 	@Override
 	public int getInt(int columnIndex) throws SQLException {
 		String value = getValueForColumnIndex(columnIndex, Integer.class);
-
+		if (value == null || value.isEmpty()) {
+			return 0;
+		}
 		return Integer.valueOf(value);
 	}
 
@@ -94,8 +96,8 @@ public class CSVResultSet extends DummyResultSet {
 	public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
 		String value = getValueForColumnIndex(columnIndex, BigDecimal.class);
 
-		if (value.isEmpty()) {
-			return BigDecimal.valueOf(0);
+		if (value == null || value.isEmpty()) {
+			return null;
 		}
 		return new BigDecimal(value);
 	}
@@ -104,8 +106,8 @@ public class CSVResultSet extends DummyResultSet {
 	public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
 		String string = getValueForColumnLabel(columnLabel, BigDecimal.class);
 
-		if (string.isEmpty()) {
-			return BigDecimal.valueOf(0);
+		if (string == null || string.isEmpty()) {
+			return null;
 		}
 		return new BigDecimal(string);
 	}
@@ -126,7 +128,9 @@ public class CSVResultSet extends DummyResultSet {
 	@Override
 	public int getInt(String columnLabel) throws SQLException {
 		String string = getValueForColumnLabel(columnLabel, Integer.class);
-
+		if (string == null || string.isEmpty()) {
+			return 0;
+		}
 		return Integer.valueOf(string);
 	}
 
@@ -134,6 +138,9 @@ public class CSVResultSet extends DummyResultSet {
 	public Date getDate(int columnIndex) throws SQLException {
 		String string = getValueForColumnIndex(columnIndex, Date.class);
 
+		if (string == null || string.isEmpty()) {
+			return null;
+		}
 		return parseDate(string);
 	}
 
@@ -141,6 +148,9 @@ public class CSVResultSet extends DummyResultSet {
 	public Date getDate(String columnLabel) throws SQLException {
 		String string = getValueForColumnLabel(columnLabel, Date.class);
 
+		if (string == null || string.isEmpty()) {
+			return null;
+		}
 		return parseDate(string);
 	}
 
@@ -171,6 +181,9 @@ public class CSVResultSet extends DummyResultSet {
 
 		String key = columns[columnIndex - 1];
 		String value = currentEntry.get(key);
+		if ("".equals(value) && (!clazz.getName().contains("String"))) {
+			return null;
+		}
 		return value;
 	}
 
@@ -182,7 +195,11 @@ public class CSVResultSet extends DummyResultSet {
 			throw new SQLException(message);
 		}
 
-		return currentEntry.get(columnLabel.toUpperCase());
+		String val = currentEntry.get(columnLabel.toUpperCase());
+		if ("".equals(val) && (!clazz.getName().contains("String"))) {
+			return null;
+		}
+		return val;
 	}
 
 }
