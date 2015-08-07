@@ -6,7 +6,7 @@ The library can either return dummy values, or values defined by you in a CSV fi
 
 For more details please see the [Wiki](https://github.com/kaiwinter/dummyjdbc/wiki)
 
-The original dummyjdbc was extended so that it accepts the filename of the results CSV file as a comment in the statement SQL. The benefit beeing that also arbitrary complex querys can be used.
+The original dummyjdbc was extended so that it accepts the filename of the results CSV file as a comment in the statement SQL. The benefit being that also arbitrary complex querys can be used.
 
 To use the CSV-enabled driver, instantiate the driver with the following connection URL:
 ```
@@ -22,6 +22,15 @@ Then, in the SQL sent to the connection, place a comment as follows:
 ```
 
 The  ```test_table.csv``` must be placed into a directory ```result_data``` in the path you specified in the connection URL (```c:/temp```` for the example above).
+
+To create a CSV file for a complex query in Oracle, you can do the following:
+
+```
+spool c:\temp\result_data\test_table.csv
+select /*csv*/ a, b, c from ... ;
+spool off;
+
+```
 
    
    
