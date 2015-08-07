@@ -8,13 +8,10 @@ For more details please see the [Wiki](https://github.com/kaiwinter/dummyjdbc/wi
 
 The original dummyjdbc was extended so that it accepts the filename of the results CSV file as a comment in the statement SQL. The benefit beeing that also arbitrary complex querys can be used.
 
-To use the "keyed" driver, instantiate the driver with property "mode" set to "keyed" (the default is the table-based driver):
+To use the CSV-enabled driver, instantiate the driver with the following connection URL:
 ```
-Properties props = new Properties();
-props.setProperty("mode", "keyed");
-Connection connection = DriverManager.getConnection("any", props);
+Connection connection = DriverManager.getConnection("jdbc:dummy:keyed:path=file:///c:/temp/");
 ```
-		
 
 Then, in the SQL sent to the connection, place a comment as follows:
 
@@ -24,7 +21,7 @@ Then, in the SQL sent to the connection, place a comment as follows:
    
 ```
 
-The  ```test_table.csv``` must be placed into a directory ```result_data``` in the classpath (into ```src/test/resources/result_data/``` for a Maven project so that it is placed in ```target/test-classes/result_data``` when the tests are run).
+The  ```test_table.csv``` must be placed into a directory ```result_data``` in the path you specified in the connection URL (```c:/temp```` for the example above).
 
    
    
