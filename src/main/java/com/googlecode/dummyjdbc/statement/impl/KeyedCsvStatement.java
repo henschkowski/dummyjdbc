@@ -100,14 +100,9 @@ public final class KeyedCsvStatement extends StatementAdapter {
 					// try a path coded into an environment variable
 					url = new URL(path + "/result_data/" + resultsFile);
 				}
-				if (url == null) {
-					LOGGER.info(
-							"No result data definition file found for '{}', using DummyResultSet.",
-							resultsFile);
-					return new DummyResultSet();
-				} else {
-					resource = new File(url.toURI());
-				}
+
+				resource = new File(url.toURI());
+
 			} catch (Exception e) {
 				LOGGER.error("Error creating URI for table file: {}", e.getMessage(), e);
 			}
