@@ -97,7 +97,12 @@ public final class KeyedCsvStatement extends StatementAdapter {
 					url = getClass().getClassLoader().getResource("/result_data/" + resultsFile);
 				}
 				if (url == null) {
-					// try a path coded into an environment variable
+					// try a path coded as driver
+					// parameter, e.g.,
+					// jdbc:dummy:keyed:path=file:///c:/temp/
+					// , resulting ina search for
+					// resultsFile in
+					// c:/temp/result_data
 					url = new URL(path + "/result_data/" + resultsFile);
 				}
 
@@ -136,7 +141,7 @@ public final class KeyedCsvStatement extends StatementAdapter {
 		CSVReader dummyResultsReader = null;
 		try {
 
-			dummyResultsReader = new CSVReader(new InputStreamReader(dummyResultsDataStream));
+                    dummyResultsReader = new CSVReader(new InputStreamReader(dummyResultsDataStream, "UTF-8"));
 
 			// Read header
 			String[] header = dummyResultsReader.readNext();
